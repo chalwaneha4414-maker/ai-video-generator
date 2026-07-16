@@ -1,6 +1,8 @@
 from fastapi import FastAPI
-from app.api.routes import health
+from app.api.routes import health, auth
 from app.core.config import settings
+from app.database.connection import engine
+from app.database.base import Base
 
 
 app = FastAPI(
@@ -16,6 +18,13 @@ app.include_router(
     tags=["Health"]
 )
 
+app.include_router(
+    auth.router,
+    prefix="/api/auth",
+    tags=["Authentication"]
+)
+
+Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def home():
